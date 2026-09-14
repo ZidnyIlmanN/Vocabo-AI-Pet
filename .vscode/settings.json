@@ -1,0 +1,11 @@
+{
+  "python.defaultInterpreterPath": "C:\\Users\\LENOVO\\AppData\\Local\\Programs\\Python\\Python311\\python.exe",
+  "python.analysis.extraPaths": [
+    "C:\\Users\\LENOVO\\AppData\\Local\\Programs\\Python\\Python311\\Lib\\site-packages",
+    "${workspaceFolder}"
+  ],
+  "python.autoComplete.extraPaths": [
+    "C:\\Users\\LENOVO\\AppData\\Local\\Programs\\Python\\Python311\\Lib\\site-packages",
+    "${workspaceFolder}"
+  ]
+}

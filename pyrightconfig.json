@@ -1,0 +1,17 @@
+{
+  "include": [
+    "app",
+    "scripts",
+    "tests"
+  ],
+  "exclude": [
+    "**/__pycache__",
+    "runs"
+  ],
+  "extraPaths": [
+    "C:/Users/LENOVO/AppData/Local/Programs/Python/Python311/Lib/site-packages",
+    "."
+  ],
+  "pythonVersion": "3.11",
+  "pythonPlatform": "Windows"
+}

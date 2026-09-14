@@ -1,0 +1,9 @@
+path: C:\Users\LENOVO\Documents\Pely\data\yolo_dataset
+train: images/train
+val: images/val
+names:
+  0: rice_egg
+  1: fried_chicken
+  2: noodles
+  3: apple
+  4: milk

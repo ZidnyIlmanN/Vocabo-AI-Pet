@@ -1,0 +1,44 @@
+{
+  "foods": [
+    {
+      "id": "rice_egg",
+      "name": "Rice and Egg",
+      "emoji": "🍚🍳",
+      "aliases": ["rice egg", "egg rice", "rice and egg"],
+      "image_folder": "data/foods/rice_egg",
+      "description": "Steamed warm white rice topped with a sunny-side up fried egg"
+    },
+    {
+      "id": "fried_chicken",
+      "name": "Fried Chicken",
+      "emoji": "🍗",
+      "aliases": ["chicken", "crispy chicken", "fried chicken"],
+      "image_folder": "data/foods/fried_chicken",
+      "description": "Golden crispy fried chicken drumstick"
+    },
+    {
+      "id": "noodles",
+      "name": "Noodles",
+      "emoji": "🍜",
+      "aliases": ["noodle", "ramen", "mie", "noodles"],
+      "image_folder": "data/foods/noodles",
+      "description": "Delicious hot savory noodle bowl with broth"
+    },
+    {
+      "id": "apple",
+      "name": "Apple",
+      "emoji": "🍎",
+      "aliases": ["red apple", "sweet apple", "apple"],
+      "image_folder": "data/foods/apple",
+      "description": "Crisp juicy fresh red apple"
+    },
+    {
+      "id": "milk",
+      "name": "Milk",
+      "emoji": "🥛",
+      "aliases": ["fresh milk", "milk bottle", "glass of milk", "milk"],
+      "image_folder": "data/foods/milk",
+      "description": "Refreshing glass of calcium-rich milk"
+    }
+  ]
+}
