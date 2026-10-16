@@ -19,6 +19,7 @@ from .eyes.events import EyeEvent
 from .vision.camera import CameraManager
 from .vision.detector import FoodDetector
 from .vision.stabilizer import TemporalStabilizer
+from .sensors.touch import TouchSensor, TouchSensorError
 from .audio.tts import create_tts_service
 from .audio.profiles import PetEmotion
 from .ui.dashboard import Dashboard
@@ -95,6 +96,22 @@ def run():
         voice_start_delay=config.voice_start_delay,
     )
 
+    touch_sensor = None
+    if config.touch_sensor_enabled:
+        touch_sensor = TouchSensor(port=config.touch_sensor_port)
+
+    def handle_affection(source: str) -> None:
+        pet_state.give_affection(20.0)
+        pat_intent = behavior_engine.get_pat_intent()
+        orchestrator.emit_emotion(
+            emotion=pat_intent.emotion,
+            message=pat_intent.text,
+            eye_event=EyeEvent.CORRECT_FOOD,
+            dashboard=dashboard,
+            speech_duration=3.0,
+        )
+        dashboard.log_event(source)
+
     # 7. Startup Sequence (PRD Addendum Section 27)
     dashboard.log_event("Application initialized")
     dashboard.log_event("Camera capture started")
@@ -124,6 +141,16 @@ def run():
     running = True
 
     try:
+        if touch_sensor:
+            try:
+                touch_sensor.start()
+                dashboard.log_event(
+                    f"Touch sensor connected on {config.touch_sensor_port}"
+                )
+            except TouchSensorError as exc:
+                logger.error("%s", exc)
+                dashboard.log_event(f"Touch sensor unavailable: {exc}")
+
         while running:
             # High-precision delta time
             current_time = time.perf_counter()
@@ -139,17 +166,7 @@ def run():
                     running = False
                 elif event.type == pygame.MOUSEBUTTONDOWN:
                     if dashboard.rect_pet.collidepoint(event.pos):
-                        # Mouse click on pet gives affection
-                        pet_state.give_affection(20.0)
-                        pat_intent = behavior_engine.get_pat_intent()
-                        orchestrator.emit_emotion(
-                            emotion=pat_intent.emotion,
-                            message=pat_intent.text,
-                            eye_event=EyeEvent.CORRECT_FOOD,
-                            dashboard=dashboard,
-                            speech_duration=3.0,
-                        )
-                        dashboard.log_event("User stroked pet (+20% Happiness)")
+                        handle_affection("User stroked pet (+20% Happiness)")
                 elif event.type == pygame.KEYDOWN:
                     if event.key in (pygame.K_ESCAPE, pygame.K_q):
                         running = False
@@ -171,17 +188,10 @@ def run():
                                 speech_duration=4.0,
                             )
                     elif event.key == pygame.K_p:
-                        # Pet/Pat affection
-                        pet_state.give_affection(20.0)
-                        pat_intent = behavior_engine.get_pat_intent()
-                        orchestrator.emit_emotion(
-                            emotion=pat_intent.emotion,
-                            message=pat_intent.text,
-                            eye_event=EyeEvent.CORRECT_FOOD,
-                            dashboard=dashboard,
-                            speech_duration=3.0,
-                        )
-                        dashboard.log_event("User gave affection (+20% Happiness)")
+                        handle_affection("User gave affection (+20% Happiness)")
+
+            if touch_sensor and touch_sensor.poll_touch():
+                handle_affection("User touched pet (+20% Happiness)")
 
             # ------------------------------------------------------------------
             # Vision & Detection Processing
@@ -283,6 +293,8 @@ def run():
         logger.info("Keyboard interrupt received.")
     finally:
         logger.info("Cleaning up and stopping subsystems...")
+        if touch_sensor:
+            touch_sensor.stop()
         camera.stop()
         detector.stop()
         tts.stop()

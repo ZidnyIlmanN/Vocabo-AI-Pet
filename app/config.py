@@ -80,6 +80,12 @@ class AppConfig:
     initial_energy: float = field(
         default_factory=lambda: _get_float("INITIAL_ENERGY", 80.0)
     )
+    touch_sensor_enabled: bool = field(
+        default_factory=lambda: _get_bool("TOUCH_SENSOR_ENABLED", False)
+    )
+    touch_sensor_port: str = field(
+        default_factory=lambda: os.getenv("TOUCH_SENSOR_PORT", "COM3")
+    )
 
     # UI & Display
     window_width: int = field(

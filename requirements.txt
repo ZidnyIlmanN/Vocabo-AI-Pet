@@ -4,5 +4,6 @@ pygame>=2.5.0
 pyttsx3>=2.90
 numpy>=1.24.0
 python-dotenv>=1.0.0
+pyserial>=3.5
 pytest>=7.0.0
 Pillow>=9.5.0

@@ -53,6 +53,8 @@ Pely/
 │   │
 │   ├── audio/
 │   │   └── tts.py                # Asynchronous queue-based SAPI5 English TTS
+│   ├── sensors/
+│   │   └── touch.py              # TTP223 touch input via Arduino/ESP32 USB serial
 │   │
 │   └── ui/
 │       └── dashboard.py          # Unified composite UI layout
@@ -105,7 +107,51 @@ Transfer or open any of these images on your smartphone!
 python scripts/test_camera.py
 ```
 
-### 4. Run the Prototype Application
+### 4. Connect an Optional TTP223 Touch Sensor
+
+Connect the TTP223 `OUT` pin to a digital input on an Arduino or ESP32, and connect
+the sensor's power and ground to the microcontroller using its supported voltage.
+Connect the microcontroller to the computer over USB. The microcontroller firmware
+should send one line containing `TOUCH` on each new touch, at 9600 baud. For example,
+an Arduino sketch can detect a touch transition like this:
+
+```cpp
+const int TOUCH_PIN = 2;
+bool wasTouched = false;
+unsigned long lastTouchTime = 0;
+const unsigned long debounceMs = 250;
+
+void setup() {
+  pinMode(TOUCH_PIN, INPUT);
+  Serial.begin(9600);
+}
+
+void loop() {
+  bool isTouched = digitalRead(TOUCH_PIN) == HIGH;
+  unsigned long now = millis();
+
+  if (isTouched && !wasTouched && now - lastTouchTime >= debounceMs) {
+    Serial.println("TOUCH");
+    lastTouchTime = now;
+  }
+
+  wasTouched = isTouched;
+  delay(10);
+}
+```
+
+Set the serial port in `.env` (for example, `COM3` on Windows) and enable the sensor:
+
+```dotenv
+TOUCH_SENSOR_ENABLED=true
+TOUCH_SENSOR_PORT=COM3
+```
+
+The app adds 20 happiness points per accepted touch, capped at 100, and plays the
+same reaction as the on-screen pet click and **P** key. Keep the serial monitor closed
+while the app is using the microcontroller port. Touch input is disabled by default.
+
+### 5. Run the Prototype Application
 ```powershell
 python -m app.main
 ```
